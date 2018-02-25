@@ -2,25 +2,27 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <algoritm>
+#include <algorithm>
 #include <ctype.h>
 #include <assert.h>
+#include <iostream>
 ////////////////////////////////////////////////////////////////////////////
 using std::map;
 using std::string;
 using std::vector;
+using std::ios_base;
 ////////////////////////////////////////////////////////////////////////////
 typedef struct Statistics
 {
-	int count;
+	int count_w;
 	string word;
 } stat;
 ////////////////////////////////////////////////////////////////////////////
 string prepare(const string& s)
 {
-	string result;
-	std::transform(s.begin(), s.end(), result.begin(), ::tolower);
-	if ispunct(s.back())//if current character is punctuation or space character(case space is not implemented)
+	string result = s;
+	std::transform(result.begin(), result.end(), result.begin(), ::tolower);//std::transform(s.begin(), s.end(), result.begin(), ::tolower); - this case doesn't work, Vladislav Andreevich.
+	if (ispunct(result.back()))//if current character is punctuation or space character(case space is not implemented)
 		result.pop_back();
 	return result;
 }
@@ -32,28 +34,28 @@ bool compare_words(const string& lhs, const string& rhs)
 ////////////////////////////////////////////////////////////////////////////
 bool compare(const stat& lhs, const stat& rhs)
 {
-	return lhs.count == rhs.count ? lhs.count > rhs.count : compare_words(lhs.word, rhs.word);//in descending order of number, in accending order of alphabet
+	return lhs.count_w != rhs.count_w ? lhs.count_w > rhs.count_w : compare_words(lhs.word, rhs.word);//in descending order of number, in accending order of alphabet
 }
 ////////////////////////////////////////////////////////////////////////////
 int main()
 {
+    vector<stat> s;
 	std::ifstream fin("input.txt");
 	if (fin.is_open())
 	{
-		string word;
+        string word;
 		map<string,int> dict;//string - our word, int - number of repetitions
-		while (!file.eof())
+		while (!fin.eof())
 		{
-			file >> word;
-			word = prepare(word);
+			fin >> word;
+ 			word = prepare(word);
 			dict[word]++;
 		}
 		stat buf;//buffer structure for copying
-		vector<stat> s;
-		for(auto it = dict.begin(), it != dict.end(), it++)
+		for(auto it = dict.begin(); it != dict.end(); it++)
 		{
 			buf.word = it->first;
-			buf.count = it->second;
+			buf.count_w = it->second;
 			s.push_back(buf);
 		}
 		std::sort(s.begin(), s.end(), compare);
@@ -64,11 +66,11 @@ int main()
 		assert(0);
 	}
 	fin.close();
-	std::ofstream fout("output.txt", ios_base::out | ios_base::trunc);//open file only for writing and delete all data in it 
+	std::ofstream fout("output.txt", ios_base::out | ios_base::trunc);//open file only for writing and delete all data in it
 	if (fout.is_open())
 	{
-		for (auto it = s.begin(), it != s.end(), it++)
-			fout << it->word << " " << it->count;
+		for (auto it = s.begin(); it != s.end(); it++)
+			fout << it->word << " " << it->count_w << "\n";
 	}
 	else
 	{
