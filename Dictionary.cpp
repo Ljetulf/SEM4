@@ -21,7 +21,11 @@ typedef struct Statistics
 string prepare(const string& s)
 {
 	string result = s;
-	std::transform(result.begin(), result.end(), result.begin(), ::tolower);//std::transform(s.begin(), s.end(), result.begin(), ::tolower); - this case doesn't work, Vladislav Andreevich.
+	std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+	/*
+	А если слово оканчивается троеточием?
+	вероятно вместо if нужен while
+	*/
 	if (ispunct(result.back()))//if current character is punctuation or space character(case space is not implemented)
 		result.pop_back();
 	return result;
@@ -52,6 +56,14 @@ int main()
 			dict[word]++;
 		}
 		stat buf;//buffer structure for copying
+		/*
+		вам не нравится range-based for ?
+		for (const auto& pair : dict)
+		{
+		  buf.word = pair.word;
+		  ...
+		}
+		*/
 		for(auto it = dict.begin(); it != dict.end(); it++)
 		{
 			buf.word = it->first;
